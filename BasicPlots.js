@@ -357,22 +357,25 @@ function Textbox(parent, x, y, text, rotate, fontsize) {
 		height = 20,
 		stroke = d3.rgb(255,255,255),
 		fill = d3.rgb(255,255,255);
-	var textgroup = parent.append("g")
-		.attr("transform", "translate(" + x + "," + y + ")");
+	var textgroup = parent.append("g");
 
 	var txt = textgroup.append("text")
 		.attr("transform", "rotate(" + rotate + ")")
 		.attr('text-anchor', 'middle')
 		.text(text)
 		.style("fill","black");
-
 		
 	var txt_width = txt.node().getComputedTextLength();
 	txt.attr("x",.5*(width-txt_width));
 	txt.attr("y",.5*(height+fontsize)-2);
 		
+	textgroup.attr("transform", "translate(" + (x + txt_width/3*Math.cos(rotate*Math.PI/180))  + "," + (y + txt_width/3*Math.sin(rotate*Math.PI/180)) + ")");
+		
+		
 	var callback = function() {
 		console.log("Text: "+txt.text());
+		
+		textgroup.attr("transform", "translate(" + (x + txt_width/3*Math.cos(rotate*Math.PI/180))  + "," + (y + txt_width/3*Math.sin(rotate*Math.PI/180)) + ")");
 	}
 			
 	var aligntext = function() {
@@ -506,12 +509,15 @@ var keydown = function() {
 		d3.event.preventDefault();
 		text = text.substring(0,text.length-1);
 	};
+	//console.log("keydown: code: "+ code + ", text: "+text);
+	focused.text = text;
+	
 	if (code == 13) { // Enter
 		focused.stroke = d3.rgb(255,255,255);
 		focused.callback();
+		focused = null;
+		
 	};
-	//console.log("keydown: code: "+ code + ", text: "+text);
-	focused.text = text;
 }
 
 var keypress = function() {

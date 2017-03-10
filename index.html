@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <style>
+#holder { border: 10px dashed #ccc; background:#eee; width: 300px; min-height: 300px; margin: 20px auto; text-align:center; vertical-align:middle; line-height: 300px;}
+#scatter { border: 10px dashed #ccc; background:#eee; width: 300px; min-height: 300px; margin: 20px auto; text-align:center; vertical-align:middle; line-height: 300px;}
+.hover { border: 10px dashed #BFE0EB; background:#E6F3F7; color:#5f7075;font-weight: bold;}
+progress { width: 100%; }
+progress:after { content: '%'; }
+.fail { background: #c00; padding: 2px; color: #fff; }
+.hidden { display: none !important;}
 </style>
 
 <html>
@@ -9,14 +16,12 @@
   <body>
     <script type="text/javascript" src="BasicPlots.js"></script>
 		<article>
-			<div id="holder">
+			<div id="holder">Create a Bar Chart
 			</div> 
-			<p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
+			<p id="upload-bar" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
 			<p id="filereader">File API &amp; FileReader API not supported</p>
 			<p id="formdata">XHR2's FormData is not supported</p>
 			<p id="progress">XHR2's upload progress isn't supported</p>
-			<p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>
-			<p>Drag an image from your desktop on to the drop zone above to see the browser both render the preview, but also upload automatically to this server.</p>
 		</article>
     <script>
 		
@@ -33,7 +38,7 @@
       progress: document.getElementById('progress')
     },
     acceptedTypes = {
-      'csv': true,
+      "text/csv": true
     },
     progress = document.getElementById('uploadprogress'),
     fileupload = document.getElementById('upload');
@@ -52,11 +57,11 @@
 		
 		if (tests.dnd) { 
 			holder.ondragover = function () { this.className = 'hover'; return false; };
-			holder.ondragend = function () { this.className = ''; return false; };
+			holder.ondragleave = function () { this.className = ''; return false; };
 			holder.ondrop = function (e) {
-				this.className = '';
-				e.preventDefault();
+				this.className='hidden';
 				[X, Bar] = initialize();
+				e.preventDefault();
 			}
 		} else {
 			fileupload.className = 'hidden';

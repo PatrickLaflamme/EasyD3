@@ -66,7 +66,7 @@ function buildLegend(svg, keys, colourScale, margins){
 			
 };
 
-function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, margins, title, xlab, ylab, colourScheme, legend){
+function barChart(svg, groups, y, errortype, colourIDs, gap, ylim, margins, title, xlab, ylab, colourScheme){
 	/*Create a bar chart. 
 	
 	svg ->			The svg on which to draw the barchart.
@@ -103,10 +103,10 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 	var colourIDs = colourIDs || y.map(function(d){return 1});
 	
 	//Define the limits of y if not provided
-	var ylim = ylim || [0,d3.max(y)];
+	var ylim = ylim || [d3.min(y),d3.max(y)];
 	
 	//define the margins if not provided.
-	var margins = margins || {top:0, bottom:20, left:30, right:0};
+	var margins = margins || {top:0, bottom:20, left:40, right:0};
 	
 	// if no title, declare the variable to be false.
 	var title = title || false;
@@ -117,19 +117,13 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 	// if no ylab, declare the variable to be false.
 	var ylab = ylab || false;
 	
-	// if no colourScheme, set to default
-	var colourScheme = colourScheme || d3.schemeCategory10;
-	
-	// if no legend, set to true
-	var legend = legend || false;
-	
-	// add space for the legend if it's going to be drawn
-	if(legend){margins.right = 30};
+	// if no this.colourScheme, set to default
+	this.colourScheme = colourScheme || d3.schemeCategory10;
 	
 	
-	// if colourScheme only defines one colour, make it an object so that it can be used with d3.scaleOrdinal()
-	if(typeof colourScheme !== 'object'){
-		colourScheme = [colourScheme];
+	// if this.colourScheme only defines one colour, make it an object so that it can be used with d3.scaleOrdinal()
+	if(typeof this.colourScheme !== 'object'){
+		this.colourScheme = [this.colourScheme];
 		};
 		
 	//names of the groups to be averaged
@@ -171,7 +165,7 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 	//make our colourScale
 	var Xcolours = {col: d3.scaleOrdinal()
 						.domain(colourgroups)
-						.range(colourScheme),
+						.range(this.colourScheme),
 						
 					place: d3.scaleBand()
 							.range([0,Xgroups.bandwidth()])
@@ -180,7 +174,7 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 	
 	//make our y axis
 	var Y = d3.scaleLinear()
-				.domain(ylim)
+				.domain([ylim[0]*0.9, ylim[1]*1.1])
 				.range([h - margins.bottom, margins.top]);
 	
 	//plot the axes			
@@ -205,8 +199,16 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 			//if the error type is SD (standard deviation) then compute the standard deviation as the error bar width
 			else if(errortype == 'SD'){
 				error = d3.deviation(y, function(d,idx){if(groupnames[i]==groups[idx] & colourgroups[j]==colourIDs[idx]){return d}});
-			};
+			}
 			
+			else if(errortype.constructor == Array){
+				error = errortype[i*colourgroups.length + j];
+			}
+			
+			else if(typeof(errortype) == 'number'){
+				error = errortype;
+			};
+							
 			DataSource.push({'mean': mean,
 							  'error': error,
 							  'group': groupnames[i],
@@ -227,24 +229,30 @@ function barChart(svg, groups, y, errortype, errorbars, colourIDs, gap, ylim, ma
 						.attr("y",function(d){return Y(d.mean)})
 						.attr("fill",function(d){return Xcolours.col(d.colour)}); //set fill from Xcolours.col
     
-    
-
-	// if errorbars were requested, plot the error bars on the bars that aggregate more than 1 datapoint (ie, have a non-NaN error value).
-    if(errorbars){
+    // return the variable that stored the final aggregated data, in case the data is useful in some way later.	
+    this.PlottedData = DataSource;
+    this.Xscales = {
+    				colour: Xcolours.col,
+    				innerPlace: Xcolours.place,
+    				outPlace: Xgroups
+    				};
+    this.errorbars = function(){
     
     	buildErrorBars(svg, DataSource.filter(function(d){return !isNaN(d.error)}) , Y)
     		.attr('x2', function(d){return Xgroups(d.group) + Xcolours.place(d.colour) + Xcolours.place.bandwidth()/2})
 			.attr('x1', function(d){return Xgroups(d.group) + Xcolours.place(d.colour) + Xcolours.place.bandwidth()/2});
+    	
+    	errorbarsDrawn = true;
+    };
     
-    	};
+    this.legend = function(){
     
-    // if  a legend was requested, add it now
-    if(legend){
-    	buildLegend(svg, colourgroups, Xcolours.col, margins);
-    	};
-    
-    // return the variable that stored the final aggregated data, in case the data is useful in some way later.	
-    return DataSource
+			margins.right = 30;
+	
+			buildLegend(svg, colourgroups, Xcolours.col, margins);
+		
+			legendDrawn = true;
+		};
 };
 
 function scatterPlot(svg, x,y, colourIDs, xlim, ylim, margins, title, colourScheme, legend){

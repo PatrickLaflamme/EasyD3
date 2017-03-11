@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <style>
-#holder { border: 10px dashed #ccc; background:#eee; width: 300px; min-height: 300px; margin: 20px auto; text-align:center; vertical-align:middle; line-height: 300px;}
+#holder { border: 5px dashed #ccc; background:#eee; width: 12.5vw; min-height: 12.5vw; margin: 20px auto; display:table;}
+#holder p {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+}
 #scatter { border: 10px dashed #ccc; background:#eee; width: 300px; min-height: 300px; margin: 20px auto; text-align:center; vertical-align:middle; line-height: 300px;}
-.hover { border: 10px dashed #BFE0EB; background:#E6F3F7; color:#5f7075;font-weight: bold;}
+#holder.hover { border: 5px dashed #bfe0eb; background:#E6F3F7; color:#5f7075; font-weight: bold;}
 progress { width: 100%; }
 progress:after { content: '%'; }
 .fail { background: #c00; padding: 2px; color: #fff; }
@@ -16,7 +21,7 @@ progress:after { content: '%'; }
   <body>
     <script type="text/javascript" src="BasicPlots.js"></script>
 		<article>
-			<div id="holder">Create a Bar Chart
+			<div id="holder"><p>Create a Bar Chart</p>
 			</div> 
 			<p id="upload-bar" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
 			<p id="filereader">File API &amp; FileReader API not supported</p>

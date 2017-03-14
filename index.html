@@ -17,6 +17,7 @@ progress:after { content: '%'; }
 <html>
   <head>
   	<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  	<center><h1 style="text-align:center;"> EasyD3 simple chart builder app </h1></center>
   </head>
   <body>
     <script type="text/javascript" src="BasicPlots.js"></script>
@@ -65,14 +66,14 @@ progress:after { content: '%'; }
 			holder.ondragleave = function () { this.className = ''; return false; };
 			holder.ondrop = function (e) {
 				this.className='hidden';
-				[X, Bar] = initialize();
+				[X, Bar] = initializeBar();
 				e.preventDefault();
 			}
 		} else {
 			fileupload.className = 'hidden';
 			fileupload.querySelector('input').onchange = function () {
 				debugger;
-				[X, Bar] = initialize();
+				[X, Bar] = initializeBar();
 			};
 		};
 		
@@ -88,7 +89,7 @@ progress:after { content: '%'; }
 		
 		container = d3.select("body").append("div")
 		
-		function initialize(){
+		function initializeBar(){
 			var Bar = container.append("svg").attr("id", "plot").attr("width", w).attr("height", h);
 
 			X = new barChart(Bar, groups,y, 0.021, cols, null, null, null, 'Title', 'Xlab', 'Ylab', colsch, true);

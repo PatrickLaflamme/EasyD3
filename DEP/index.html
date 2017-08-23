@@ -2,9 +2,9 @@
 <style>
 #holder { border: 5px dashed #ccc; background:#eee; width: 12.5vw; min-height: 12.5vw; margin: 20px auto; display:table;}
 #holder p {
-  display: table-cell; 
-  vertical-align: middle; 
-  text-align: center; 
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
 #scatter { border: 10px dashed #ccc; background:#eee; width: 300px; min-height: 300px; margin: 20px auto; text-align:center; vertical-align:middle; line-height: 300px;}
 #holder.hover { border: 5px dashed #bfe0eb; background:#E6F3F7; color:#5f7075; font-weight: bold;}
@@ -23,21 +23,21 @@ progress:after { content: '%'; }
     <script type="text/javascript" src="BasicPlots.js"></script>
 		<article>
 			<div id="holder"><p>Create a Bar Chart</p>
-			</div> 
+			</div>
 			<p id="upload-bar" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
 			<p id="filereader">File API &amp; FileReader API not supported</p>
 			<p id="formdata">XHR2's FormData is not supported</p>
 			<p id="progress">XHR2's upload progress isn't supported</p>
 		</article>
     <script>
-		
+
 		var holder = document.getElementById('holder'),
     tests = {
       filereader: typeof FileReader != 'undefined',
       dnd: 'draggable' in document.createElement('span'),
       formdata: !!window.FormData,
       progress: "upload" in new XMLHttpRequest
-    }, 
+    },
     support = {
       filereader: document.getElementById('filereader'),
       formdata: document.getElementById('formdata'),
@@ -48,7 +48,7 @@ progress:after { content: '%'; }
     },
     progress = document.getElementById('uploadprogress'),
     fileupload = document.getElementById('upload');
-		
+
 		"filereader formdata progress".split(' ').forEach(function (api) {
 			if (tests[api] === false) {
 				support[api].className = 'fail';
@@ -60,8 +60,8 @@ progress:after { content: '%'; }
 				support[api].className = 'hidden';
 			}
 		});
-		
-		if (tests.dnd) { 
+
+		if (tests.dnd) {
 			holder.ondragover = function () { this.className = 'hover'; return false; };
 			holder.ondragleave = function () { this.className = ''; return false; };
 			holder.ondrop = function (e) {
@@ -76,36 +76,36 @@ progress:after { content: '%'; }
 				[X, Bar] = initializeBar();
 			};
 		};
-		
+
 		{
 		var w = window.innerWidth;
 		var h = window.innerHeight*0.5;
-	
+
 		var groups = ["Neutral", "Sadness", "Anger", "Joy", "Surprise", "Disgust", "Fear", "Neutral", "Sadness", "Fear", "Anger", "Joy", "Surprise", "Disgust"];
 		var y = [0.883, 0.789, 0.760, 0.758, 0.722, 0.726,0.690, 0.781, 0.755, 0.723, 0.782, 0.688, 0.781, 0.675];
 		var x = [0.021, 0.021, 0.021, 0.021, 0.021, 0.021, 0.021, 0.023, 0.023, 0.023, 0.023, 0.023, 0.023, 0.023];
 		var cols = ["Experiment 1","Experiment 1","Experiment 1","Experiment 1","Experiment 1","Experiment 1","Experiment 1","Experiment 2","Experiment 2","Experiment 2","Experiment 2","Experiment 2","Experiment 2","Experiment 2"];
 		var colsch = ['teal','blue', 'grey', '#505050'];
-		
+
 		container = d3.select("body").append("div")
-		
+
 		function initializeBar(){
 			var Bar = container.append("svg").attr("id", "plot").attr("width", w).attr("height", h);
 
 			X = new barChart(Bar, groups,y, 0.021, cols, null, null, null, 'Title', 'Xlab', 'Ylab', colsch, true);
-		
+
 			return [X, Bar];
-		
+
 		}
-		
+
 		function download(){
 			var a = document.body.appendChild(
 					document.createElement("a")
 			);
 			//get svg source.
-			
+
 			svg = document.getElementById('plot');
-			
+
 			var serializer = new XMLSerializer();
 			var source = serializer.serializeToString(svg);
 
@@ -122,15 +122,15 @@ progress:after { content: '%'; }
 
 			//convert svg source to URI data scheme.
 			var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
-			
+
 			a.download = "export.svg";
 			a.href = url; // Grab the HTML
 			a.click(); // Trigger a click on the element
 		}
-  	
+
   	}
   	</script>
-  	
+
   	<button type="button" onclick="X.legend()">Add legend</button>
   	<button type="button" onclick="X.errorbars()">Add Error Bars</button>
   	<button type="button" onclick="Bar.remove();[X, Bar] = initialize();">Reset</button>

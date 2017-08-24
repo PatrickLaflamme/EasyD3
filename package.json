@@ -4,6 +4,7 @@
   "description": "GUI tool to build simple visualizations in d3.",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
